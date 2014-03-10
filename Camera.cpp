@@ -4,12 +4,14 @@
 #include "Camera.h"
 
 
-Camera::Camera() {}
+Camera::Camera() {
+    Orient(Point(2.0, 2.0, 2.0), Point(0, 0, 0), Vector(0, 1, 0));
+}
 
 Camera::~Camera() {}
 
 void Camera::Reset() {
-    
+    Orient(Point(2.0, 2.0, 2.0), Point(0, 0, 0), Vector(0, 1, 0));
 }
 
 void Camera::Orient(Point eye, Point focus, Vector up) {
@@ -52,11 +54,6 @@ Matrix Camera::GetProjectionMatrix() {
                           0, 1.0/(tan(DEG_TO_RAD(view/2))*far), 0, 0,
                           0, 0, 1.0/far, 0,
                           0, 0, 0, 1);
-/*    Matrix R(u[0], u[1], u[2], 0,
-             v[0], v[1], v[2], 0,
-             w[0], w[1], w[2], 0,
-               0,    0,    0,  1);
-    Matrix T = trans_mat(Vector(-eyePoint[0],-eyePoint[1],-eyePoint[2]));*/
     return Mpp * Sxyz;
 }
 
@@ -74,8 +71,6 @@ Matrix Camera::GetModelViewMatrix() {
              v[0], v[1], v[2], 0,
              w[0], w[1], w[2], 0,
                0,    0,    0,  1);
-/*    Point Pn = eyePoint + near * look;
-    Matrix T = trans_mat(Vector(-Pn[0],-Pn[1],-Pn[2]));*/
     Matrix T = trans_mat(Vector(-eyePoint[0],-eyePoint[1],-eyePoint[2]));
     return R * T;
 }

@@ -10,6 +10,7 @@
 #include "Cylinder.h"
 #include "Cone.h"
 #include "Sphere.h"
+#include "Torus.h"
 #include "SceneParser.h"
 #include "Camera.h"
 
@@ -34,7 +35,7 @@ float lookZ = -2;
 
 /** These are GLUI control panel objects ***/
 int  main_window;
-string filenamePath = "data\\general\\test.xml";
+string filenamePath = "data/general/test.xml";
 GLUI_EditText* filenameTextField = NULL;
 
 
@@ -43,6 +44,7 @@ Cube* cube = new Cube();
 Cylinder* cylinder = new Cylinder();
 Cone* cone = new Cone();
 Sphere* sphere = new Sphere();
+Torus* torus = new Torus();
 Shape* shape = NULL;
 SceneParser* parser = NULL;
 Camera* camera = new Camera();
@@ -80,7 +82,7 @@ void renderShape (int shapeType) {
 		shape = sphere;
 		break;
 	case SHAPE_SPECIAL1:
-		shape = cube;
+		shape = torus;
 		break;
 	default:
 		shape = cube;
@@ -230,6 +232,41 @@ void applyMaterial(const SceneMaterial &material)
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &material_local.cEmissive.r);
 }
 
+void drawSceneTree(SceneNode *node, Matrix compositeMatrix, bool wire) {
+	if (node != NULL) {
+	glPushMatrix();
+		Matrix M = Matrix(compositeMatrix);
+		Matrix T = Matrix();
+		Matrix R = Matrix();
+		Matrix S = Matrix();
+		for (int i = 0; i < node->transformations.size(); ++i) {
+			switch(node->transformations[i]->type) {
+				case TRANSFORMATION_TRANSLATE:
+					T = T * trans_mat(node->transformations[i]->translate);
+					break;
+				case TRANSFORMATION_SCALE:
+					S = S * scale_mat(node->transformations[i]->scale);
+					break;
+				case TRANSFORMATION_ROTATE:
+					R = R * rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
+					break;
+				case TRANSFORMATION_MATRIX:
+					M = M * node->transformations[i]->matrix;
+					break;
+			}
+		}
+		M = S * R * T * M;
+		glMultMatrixd(M.unpack());
+		for (int i = 0; i < node->primitives.size(); ++i) {
+			if (wire) applyMaterial(node->primitives[i]->material);
+			renderShape(node->primitives[i]->type);
+		}
+		for (int i = 0; i < node->children.size(); ++i) {
+			drawSceneTree(node->children[i], M, wire);
+		}
+	glPopMatrix();
+	}
+}
 
 /***************************************** myGlutDisplay() *****************/
 
@@ -260,7 +297,7 @@ void myGlutDisplay(void)
 	}
 
 	SceneNode* root = parser->getRootNode();
-	Matrix compositeMatrix;
+	Matrix compositeMatrix = Matrix();
 
 	//drawing the axes
 	glEnable(GL_COLOR_MATERIAL);
@@ -278,6 +315,7 @@ void myGlutDisplay(void)
 	if (wireframe) {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		drawSceneTree(root, compositeMatrix, true);
 		//TODO: draw wireframe of the scene...
 		// note that you don't need to applyMaterial, just draw the geometry
 	}
@@ -294,6 +332,8 @@ void myGlutDisplay(void)
 	if (fillObj == 1) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		drawSceneTree(root, compositeMatrix, false);
+		//renderShape(SHAPE_CUBE);
 		//TODO: render the scene...
 		// note that you should always applyMaterial first, then draw the geometry
 	}

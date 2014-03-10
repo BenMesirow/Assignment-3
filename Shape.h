@@ -1,3 +1,4 @@
+
 #ifndef SHAPE_H
 #define SHAPE_H
 
@@ -6,26 +7,15 @@
 
 class Shape {
 public:
-	Shape() {};
-	~Shape() {};
 
-	void setSegments(int x, int y) {
-		m_segmentsX = x;
-		m_segmentsY = y;
-	}
+	void setSegments(int x, int y);
 
 	virtual void draw() {};
 	virtual void drawNormal() {};
 
 protected:
-	void normalizeNormal (float x, float y, float z) {
-		normalizeNormal (Vector(x, y, z));
-	};
-
-	void normalizeNormal (Vector v) {
-		v.normalize();
-		glNormal3dv(v.unpack());
-	};
+	void normalizeNormal (float x, float y, float z);
+	void normalizeNormal (Vector v);
 
 	int m_segmentsX, m_segmentsY;
 };

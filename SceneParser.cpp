@@ -53,24 +53,24 @@ SceneParser::~SceneParser()
    m_objects.clear(); 
 }
 
-bool SceneParser :: getGlobalData(SceneGlobalData& data) 
+bool SceneParser::getGlobalData(SceneGlobalData& data) 
 {
    data = m_globalData;
    return true;
 }
 
-bool SceneParser :: getCameraData(SceneCameraData& data) 
+bool SceneParser::getCameraData(SceneCameraData& data) 
 {
    data = m_cameraData;
    return true;
 }
 
-int SceneParser :: getNumLights()
+int SceneParser::getNumLights()
 {
    return m_lights.size();
 }
 
-bool SceneParser :: getLightData(int i, SceneLightData& data) 
+bool SceneParser::getLightData(int i, SceneLightData& data) 
 {
    if (i < 0 || (unsigned int)i >= m_lights.size())
    {
@@ -81,7 +81,7 @@ bool SceneParser :: getLightData(int i, SceneLightData& data)
    return true;
 }
 
-SceneNode* SceneParser :: getRootNode() 
+SceneNode* SceneParser::getRootNode() 
 {
    map<std::string, SceneNode*>::iterator node = m_objects.find("root");
    if (node == m_objects.end())

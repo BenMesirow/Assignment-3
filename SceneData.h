@@ -33,7 +33,6 @@ enum PrimitiveType {
 	SHAPE_MESH = 7
 };
 
-
 //! Enumeration for types of transformations that can be applied to objects, lights, and cameras.
 enum TransformationType {
    TRANSFORMATION_TRANSLATE, TRANSFORMATION_SCALE, 
@@ -131,7 +130,6 @@ public:
    float blend;
 
    SceneFileMap* bumpMap;
-
    float shininess;
 
    float ior;           //! index of refaction
