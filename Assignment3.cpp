@@ -235,30 +235,27 @@ void applyMaterial(const SceneMaterial &material)
 void drawSceneTree(SceneNode *node, Matrix compositeMatrix, bool wire) {
 	if (node != NULL) {
 	glPushMatrix();
-		Matrix M = Matrix(compositeMatrix);
-		Matrix T = Matrix();
-		Matrix R = Matrix();
-		Matrix S = Matrix();
+		Matrix M = Matrix();
 		for (int i = 0; i < node->transformations.size(); ++i) {
 			switch(node->transformations[i]->type) {
 				case TRANSFORMATION_TRANSLATE:
-					T = T * trans_mat(node->transformations[i]->translate);
+					M = trans_mat(node->transformations[i]->translate);
 					break;
 				case TRANSFORMATION_SCALE:
-					S = S * scale_mat(node->transformations[i]->scale);
+					M = scale_mat(node->transformations[i]->scale);
 					break;
 				case TRANSFORMATION_ROTATE:
-					R = R * rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
+					M = rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
 					break;
 				case TRANSFORMATION_MATRIX:
-					M = M * node->transformations[i]->matrix;
+					M = node->transformations[i]->matrix;
 					break;
 			}
 		}
-		M = S * R * T * M;
+		M = M * compositeMatrix;
 		glMultMatrixd(M.unpack());
 		for (int i = 0; i < node->primitives.size(); ++i) {
-			if (wire) applyMaterial(node->primitives[i]->material);
+			if (!wire) applyMaterial(node->primitives[i]->material);
 			renderShape(node->primitives[i]->type);
 		}
 		for (int i = 0; i < node->children.size(); ++i) {
@@ -315,7 +312,7 @@ void myGlutDisplay(void)
 	if (wireframe) {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		drawSceneTree(root, compositeMatrix, true);
+//		drawSceneTree(root, compositeMatrix, true);
 		//TODO: draw wireframe of the scene...
 		// note that you don't need to applyMaterial, just draw the geometry
 	}
@@ -332,7 +329,8 @@ void myGlutDisplay(void)
 	if (fillObj == 1) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		drawSceneTree(root, compositeMatrix, false);
+		glutSolidCube(1.0);
+//		drawSceneTree(root, compositeMatrix, false);
 		//renderShape(SHAPE_CUBE);
 		//TODO: render the scene...
 		// note that you should always applyMaterial first, then draw the geometry
@@ -352,6 +350,7 @@ void onExit()
 	delete cylinder;
 	delete cone;
 	delete sphere;
+	delete torus;
 	delete camera;
 	if (parser != NULL) {
 		delete parser;

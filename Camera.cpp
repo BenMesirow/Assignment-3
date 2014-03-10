@@ -5,13 +5,19 @@
 
 
 Camera::Camera() {
-    Orient(Point(2.0, 2.0, 2.0), Point(0, 0, 0), Vector(0, 1, 0));
+    Orient(Point(2.0, 2.0, 2.0), Vector(-2.0, -2.0, -2.0), Vector(0, 1, 0));
+    near = 0.0;
+    far = 4.0;
+    view = 45;
 }
 
 Camera::~Camera() {}
 
 void Camera::Reset() {
-    Orient(Point(2.0, 2.0, 2.0), Point(0, 0, 0), Vector(0, 1, 0));
+    Orient(Point(2.0, 2.0, 2.0), Vector(-2.0, -2.0, -2.0), Vector(0, 1, 0));
+    near = 0.00001;
+    far = 4.0;
+    view = 45;
 }
 
 void Camera::Orient(Point eye, Point focus, Vector up) {
@@ -22,6 +28,7 @@ void Camera::Orient(Point eye, Point focus, Vector up) {
 
     w = Vector(look);
     w.negate();
+    w.normalize();
     u = cross(up, w);
     u.normalize();
     v = cross(w, u);
