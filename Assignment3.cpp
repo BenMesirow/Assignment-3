@@ -265,6 +265,93 @@ void drawSceneTree(SceneNode *node, Matrix compositeMatrix, bool wire) {
 	}
 }
 
+void drawSceneTree2(SceneNode *node, bool wire, Matrix& fromP) {
+	if (node != NULL) {
+	glPushMatrix();
+		Matrix T = fromP;
+		for (int i = 0; i < node->transformations.size(); ++i) {
+			switch(node->transformations[i]->type) {
+				case TRANSFORMATION_TRANSLATE:
+					T = T * trans_mat(node->transformations[i]->translate);
+					//glMultMatrixd(trans_mat(node->transformations[i]->translate).unpack());
+					break;
+				case TRANSFORMATION_SCALE:
+					T = T * scale_mat(node->transformations[i]->scale);
+					//glMultMatrixd(scale_mat(node->transformations[i]->scale).unpack())
+					break;
+				case TRANSFORMATION_ROTATE:
+					T = T * rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
+					//glMultMatrixd(rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle).unpack());
+					break;
+				case TRANSFORMATION_MATRIX:
+					T = node->transformations[i]->matrix * T;
+					//glMultMatrixd(node->transformations[i]->matrix.unpack());
+					break;
+			}
+		}
+		//T = fromP * compositeMatrix;
+		glMultMatrixd(T.unpack());
+		glPushMatrix();
+		for (int i = 0; i < node->primitives.size(); ++i) {
+			if (!wire) applyMaterial(node->primitives[i]->material);
+			renderShape(node->primitives[i]->type);
+		}
+		glPopMatrix();
+		for (int i = 0; i < node->children.size(); ++i) {
+			drawSceneTree2(node->children[i], wire, T);
+		}
+	glPopMatrix();
+	//glPopMatrix();
+	}
+}
+
+void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
+	if (node != NULL) {
+	glPushMatrix();
+		Matrix T = fromP;
+		for (int i = 0; i < node->transformations.size(); i++) {
+			switch(node->transformations[i]->type) {
+				case TRANSFORMATION_TRANSLATE:
+					T = T * trans_mat(node->transformations[i]->translate);
+					//T = trans_mat(node->transformations[i]->translate) * T;
+					break;
+				case TRANSFORMATION_SCALE:
+					T = T * scale_mat(node->transformations[i]->scale);
+					//T = scale_mat(node->transformations[i]->scale) * T;
+					break;
+				case TRANSFORMATION_ROTATE:
+					T = T * rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
+					//T = rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle) * T;
+					break;
+				case TRANSFORMATION_MATRIX:
+					T = node->transformations[i]->matrix * T;
+					break;
+			}
+		}
+        //glPushMatrix();
+		glMultMatrixd(T.unpack());
+		////glPushMatrix();
+		for (int i = 0; i < node->primitives.size(); i++) {
+			if (!wire) 
+				applyMaterial(node->primitives[i]->material);
+			printf("A\n");
+			renderShape(node->primitives[i]->type);
+			//applyMaterial(node->primitives[i]->material);
+			//sphere->setSegments(segmentsX, segmentsY);
+			//sphere->draw();
+		}
+
+		glPopMatrix();
+
+		printf("%d\n", node->children.size());
+		for (int i = 0; i < node->children.size(); i++) {
+			printf("B\n");
+			drawSceneTree3(node->children[i], wire, T);
+		}
+		////glPopMatrix();
+	}
+}
+
 /***************************************** myGlutDisplay() *****************/
 
 void myGlutDisplay(void)
@@ -275,6 +362,8 @@ void myGlutDisplay(void)
 	if (parser == NULL) {
 		return;
 	}
+
+	//setupCamera(); //?? should it be here
 
 	camera->SetViewAngle(viewAngle);
 	glMatrixMode(GL_PROJECTION);
@@ -294,7 +383,7 @@ void myGlutDisplay(void)
 	}
 
 	SceneNode* root = parser->getRootNode();
-	Matrix compositeMatrix = Matrix();
+	//Matrix compositeMatrix = Matrix();
 
 	//drawing the axes
 	glEnable(GL_COLOR_MATERIAL);
@@ -312,7 +401,8 @@ void myGlutDisplay(void)
 	if (wireframe) {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//		drawSceneTree(root, compositeMatrix, true);
+		Matrix P = Matrix();
+		drawSceneTree3(root, true, P);
 		//TODO: draw wireframe of the scene...
 		// note that you don't need to applyMaterial, just draw the geometry
 	}
@@ -330,7 +420,8 @@ void myGlutDisplay(void)
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glutSolidCube(1.0);
-//		drawSceneTree(root, compositeMatrix, false);
+		Matrix P = Matrix();
+     	drawSceneTree3(root, false, P);
 		//renderShape(SHAPE_CUBE);
 		//TODO: render the scene...
 		// note that you should always applyMaterial first, then draw the geometry

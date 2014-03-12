@@ -1,6 +1,6 @@
 /*
- * camera.cpp
- */
+* camera.cpp
+*/
 #include "Camera.h"
 
 
@@ -28,7 +28,7 @@ void Camera::Orient(Point eye, Point focus, Vector up) {
 
     w = Vector(look);
     w.negate();
-    w.normalize();
+    //w.normalize();
     u = cross(up, w);
     u.normalize();
     v = cross(w, u);
@@ -43,7 +43,7 @@ void Camera::Orient(Point eye, Vector look, Vector up) {
 
     w = Vector(look);
     w.negate();
-    w.normalize();
+    //w.normalize();
     u = cross(up, w);
     u.normalize();
     v = cross(w, u);
@@ -51,7 +51,7 @@ void Camera::Orient(Point eye, Vector look, Vector up) {
 
 }
 
-Matrix Camera::GetProjectionMatrix() { 
+Matrix Camera::GetProjectionMatrix() {
     double c = -near / far;
     Matrix Mpp = Matrix(1, 0, 0, 0,
                         0, 1, 0, 0,
@@ -69,15 +69,15 @@ void Camera::SetNearPlane (double nearPlane) { near = nearPlane; }
 void Camera::SetFarPlane (double farPlane) { far = farPlane; }
 
 void Camera::SetScreenSize (int screenWidth, int screenHeight) {
-	width = screenWidth;
-	height = screenHeight;
+width = screenWidth;
+height = screenHeight;
 }
 
 Matrix Camera::GetModelViewMatrix() {
     Matrix R(u[0], u[1], u[2], 0,
              v[0], v[1], v[2], 0,
              w[0], w[1], w[2], 0,
-               0,    0,    0,  1);
+               0, 0, 0, 1);
     Matrix T = trans_mat(Vector(-eyePoint[0],-eyePoint[1],-eyePoint[2]));
     return R * T;
 }
