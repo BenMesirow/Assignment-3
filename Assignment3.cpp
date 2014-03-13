@@ -179,9 +179,10 @@ void setLight(const SceneLightData &light)
         case LIGHT_POINT:
         {
             // Convert from double[] to float[] and make sure the w coordinate is correct 
-            float position[] = { light.pos[0], light.pos[1], light.pos[2], 1 };
+            float position[] = { light.pos[0], light.pos[1], light.pos[2], 1 / light.pos[3] };
             glLightfv(id, GL_POSITION, position);
 			glEnable(id);
+			//printf("%d\n",id);
             break;
         }
 
@@ -190,13 +191,46 @@ void setLight(const SceneLightData &light)
             // Convert from double[] to float[] and make sure the direction vector is normalized (it isn't for a lot of scene files)
             Vector direction = -light.dir;
 			direction.normalize();
-            float position[] = { direction[0], direction[1], direction[2], direction[3] };
+            float position[] = { direction[0], direction[1], direction[2], 0 };
             glLightfv(id, GL_POSITION, position);
 			glEnable(id);
+			printf("%d\n",id);
             break;
         }
+
+        case LIGHT_SPOT:
+        {
+            // Convert from double[] to float[] and make sure the direction vector is normalized (it isn't for a lot of scene files)
+            Vector direction = -light.dir;
+			direction.normalize();
+            float position[] = { direction[0], direction[1], direction[2], direction[3] };
+            //glLightfv(id, GL_POSITION, position);
+            float a[] = { direction[0], direction[1], direction[2]};
+            glLightfv(id, GL_POSITION, position);
+            glLightfv(id, GL_SPOT_DIRECTION, a);
+            glLightf(id, GL_SPOT_CUTOFF, light.angle);
+            glLightf(id, GL_SPOT_EXPONENT, (light.radius / light.penumbra) * 128);
+			glEnable(id);
+			printf("%lf\n",light.radius);
+            break;
+        }
+
+        case LIGHT_AREA:
+        {
+            // Convert from double[] to float[] and make sure the direction vector is normalized (it isn't for a lot of scene files)
+            Vector direction = -light.dir;
+			direction.normalize();
+            float position[] = { direction[0], direction[1], direction[2], direction[3] };
+            //glLightfv(id, GL_POSITION, position);
+			//glEnable(id);
+			printf("HOL\n");
+            break;
+        }
+
+
         default:
         {
+        	printf("A:A");
         	break;       	
         }
     }
@@ -333,9 +367,9 @@ void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
 		////glPushMatrix();
 		for (int i = 0; i < node->primitives.size(); i++) {
 			if (!wire){
-				//applyMaterial(node->primitives[i]->material);
-				renderShape(node->primitives[i]->type);
 				applyMaterial(node->primitives[i]->material);
+				renderShape(node->primitives[i]->type);
+				//applyMaterial(node->primitives[i]->material);
 			} 
 			else{
 				renderShape(node->primitives[i]->type);
@@ -423,7 +457,7 @@ void myGlutDisplay(void)
 	if (fillObj == 1) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glutSolidCube(1.0);
+		//glutSolidCube(1.0);
 		Matrix P = Matrix();
      	drawSceneTree3(root, false, P);
 		//renderShape(SHAPE_CUBE);
