@@ -16,7 +16,7 @@ Camera::~Camera() {}
 void Camera::Reset() {
     Orient(Point(2.0, 2.0, 2.0), Vector(-2.0, -2.0, -2.0), Vector(0, 1, 0));
     near = 0.00001;
-    far = 4.0;
+    far = 1000;
     view = 45;
 }
 

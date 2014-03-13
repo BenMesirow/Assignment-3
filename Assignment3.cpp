@@ -324,7 +324,7 @@ void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
 					//T = rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle) * T;
 					break;
 				case TRANSFORMATION_MATRIX:
-					T = node->transformations[i]->matrix * T;
+					T = T * node->transformations[i]->matrix;
 					break;
 			}
 		}
@@ -332,20 +332,21 @@ void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
 		glMultMatrixd(T.unpack());
 		////glPushMatrix();
 		for (int i = 0; i < node->primitives.size(); i++) {
-			if (!wire) 
+			if (!wire){
+				//applyMaterial(node->primitives[i]->material);
+				renderShape(node->primitives[i]->type);
 				applyMaterial(node->primitives[i]->material);
-			printf("A\n");
-			renderShape(node->primitives[i]->type);
-			//applyMaterial(node->primitives[i]->material);
-			//sphere->setSegments(segmentsX, segmentsY);
-			//sphere->draw();
+			} 
+			else{
+				renderShape(node->primitives[i]->type);
+			}
 		}
 
 		glPopMatrix();
 
-		printf("%d\n", node->children.size());
+		//printf("%d\n", node->children.size());
 		for (int i = 0; i < node->children.size(); i++) {
-			printf("B\n");
+			//printf("B\n");
 			drawSceneTree3(node->children[i], wire, T);
 		}
 		////glPopMatrix();
@@ -383,7 +384,7 @@ void myGlutDisplay(void)
 	}
 
 	SceneNode* root = parser->getRootNode();
-	//Matrix compositeMatrix = Matrix();
+	Matrix compositeMatrix;
 
 	//drawing the axes
 	glEnable(GL_COLOR_MATERIAL);
@@ -403,6 +404,9 @@ void myGlutDisplay(void)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		Matrix P = Matrix();
 		drawSceneTree3(root, true, P);
+		//sphere->draw();
+		//glColor3f(0,1,0);
+		//cube->draw();
 		//TODO: draw wireframe of the scene...
 		// note that you don't need to applyMaterial, just draw the geometry
 	}
