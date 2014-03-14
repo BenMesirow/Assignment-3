@@ -6,8 +6,6 @@
 
 Camera::Camera() {
     Orient(Point(2.0, 2.0, 2.0), Vector(-2.0, -2.0, -2.0), Vector(0, 1, 0));
-    //near = 0.0;
-    //far = 4.0;
     near = 0.0001;
     far = 1000;
     view = 45;
@@ -32,7 +30,7 @@ void Camera::Orient(Point eye, Point focus, Vector up) {
 
     w = Vector(look);
     w.negate();
-    //w.normalize();
+    w.normalize();
     u = cross(up, w);
     u.normalize();
     v = cross(w, u);
@@ -47,7 +45,7 @@ void Camera::Orient(Point eye, Vector look, Vector up) {
 
     w = Vector(look);
     w.negate();
-    //w.normalize();
+    w.normalize();
     u = cross(up, w);
     u.normalize();
     v = cross(w, u);

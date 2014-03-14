@@ -179,10 +179,9 @@ void setLight(const SceneLightData &light)
         case LIGHT_POINT:
         {
             // Convert from double[] to float[] and make sure the w coordinate is correct 
-            float position[] = { light.pos[0], light.pos[1], light.pos[2], 1 / light.pos[3] };
+            float position[] = { light.pos[0], light.pos[1], light.pos[2], light.pos[3] };
             glLightfv(id, GL_POSITION, position);
 			glEnable(id);
-			//printf("%d\n",id);
             break;
         }
 
@@ -194,7 +193,6 @@ void setLight(const SceneLightData &light)
             float position[] = { direction[0], direction[1], direction[2], 0 };
             glLightfv(id, GL_POSITION, position);
 			glEnable(id);
-			printf("%d\n",id);
             break;
         }
 
@@ -204,14 +202,12 @@ void setLight(const SceneLightData &light)
             Vector direction = -light.dir;
 			direction.normalize();
             float position[] = { direction[0], direction[1], direction[2], direction[3] };
-            //glLightfv(id, GL_POSITION, position);
-            float a[] = { direction[0], direction[1], direction[2]};
+            float direction3[] = { direction[0], direction[1], direction[2]};
             glLightfv(id, GL_POSITION, position);
-            glLightfv(id, GL_SPOT_DIRECTION, a);
+            glLightfv(id, GL_SPOT_DIRECTION, direction3);
             glLightf(id, GL_SPOT_CUTOFF, light.angle);
             glLightf(id, GL_SPOT_EXPONENT, (light.radius / light.penumbra) * 128);
 			glEnable(id);
-			printf("%lf\n",light.radius);
             break;
         }
 
@@ -221,16 +217,15 @@ void setLight(const SceneLightData &light)
             Vector direction = -light.dir;
 			direction.normalize();
             float position[] = { direction[0], direction[1], direction[2], direction[3] };
-            //glLightfv(id, GL_POSITION, position);
-			//glEnable(id);
-			printf("HOL\n");
+            glLightfv(id, GL_POSITION, position);
+			glEnable(id);
             break;
         }
 
 
         default:
         {
-        	printf("A:A");
+        	printf("Light type cannot be applied!\n");
         	break;       	
         }
     }
@@ -266,80 +261,9 @@ void applyMaterial(const SceneMaterial &material)
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &material_local.cEmissive.r);
 }
 
-void drawSceneTree(SceneNode *node, Matrix compositeMatrix, bool wire) {
-	if (node != NULL) {
-	glPushMatrix();
-		Matrix M = Matrix();
-		for (int i = 0; i < node->transformations.size(); ++i) {
-			switch(node->transformations[i]->type) {
-				case TRANSFORMATION_TRANSLATE:
-					M = trans_mat(node->transformations[i]->translate);
-					break;
-				case TRANSFORMATION_SCALE:
-					M = scale_mat(node->transformations[i]->scale);
-					break;
-				case TRANSFORMATION_ROTATE:
-					M = rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
-					break;
-				case TRANSFORMATION_MATRIX:
-					M = node->transformations[i]->matrix;
-					break;
-			}
-		}
-		M = M * compositeMatrix;
-		glMultMatrixd(M.unpack());
-		for (int i = 0; i < node->primitives.size(); ++i) {
-			if (!wire) applyMaterial(node->primitives[i]->material);
-			renderShape(node->primitives[i]->type);
-		}
-		for (int i = 0; i < node->children.size(); ++i) {
-			drawSceneTree(node->children[i], M, wire);
-		}
-	glPopMatrix();
-	}
-}
 
-void drawSceneTree2(SceneNode *node, bool wire, Matrix& fromP) {
-	if (node != NULL) {
-	glPushMatrix();
-		Matrix T = fromP;
-		for (int i = 0; i < node->transformations.size(); ++i) {
-			switch(node->transformations[i]->type) {
-				case TRANSFORMATION_TRANSLATE:
-					T = T * trans_mat(node->transformations[i]->translate);
-					//glMultMatrixd(trans_mat(node->transformations[i]->translate).unpack());
-					break;
-				case TRANSFORMATION_SCALE:
-					T = T * scale_mat(node->transformations[i]->scale);
-					//glMultMatrixd(scale_mat(node->transformations[i]->scale).unpack())
-					break;
-				case TRANSFORMATION_ROTATE:
-					T = T * rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
-					//glMultMatrixd(rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle).unpack());
-					break;
-				case TRANSFORMATION_MATRIX:
-					T = node->transformations[i]->matrix * T;
-					//glMultMatrixd(node->transformations[i]->matrix.unpack());
-					break;
-			}
-		}
-		//T = fromP * compositeMatrix;
-		glMultMatrixd(T.unpack());
-		glPushMatrix();
-		for (int i = 0; i < node->primitives.size(); ++i) {
-			if (!wire) applyMaterial(node->primitives[i]->material);
-			renderShape(node->primitives[i]->type);
-		}
-		glPopMatrix();
-		for (int i = 0; i < node->children.size(); ++i) {
-			drawSceneTree2(node->children[i], wire, T);
-		}
-	glPopMatrix();
-	//glPopMatrix();
-	}
-}
 
-void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
+void drawSceneTree(SceneNode *node, bool wire, Matrix& fromP) {
 	if (node != NULL) {
 	glPushMatrix();
 		Matrix T = fromP;
@@ -347,29 +271,24 @@ void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
 			switch(node->transformations[i]->type) {
 				case TRANSFORMATION_TRANSLATE:
 					T = T * trans_mat(node->transformations[i]->translate);
-					//T = trans_mat(node->transformations[i]->translate) * T;
 					break;
 				case TRANSFORMATION_SCALE:
 					T = T * scale_mat(node->transformations[i]->scale);
-					//T = scale_mat(node->transformations[i]->scale) * T;
 					break;
 				case TRANSFORMATION_ROTATE:
 					T = T * rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle);
-					//T = rot_mat(node->transformations[i]->rotate, node->transformations[i]->angle) * T;
 					break;
 				case TRANSFORMATION_MATRIX:
 					T = T * node->transformations[i]->matrix;
 					break;
 			}
 		}
-        //glPushMatrix();
+
 		glMultMatrixd(T.unpack());
-		////glPushMatrix();
 		for (int i = 0; i < node->primitives.size(); i++) {
 			if (!wire){
 				applyMaterial(node->primitives[i]->material);
 				renderShape(node->primitives[i]->type);
-				//applyMaterial(node->primitives[i]->material);
 			} 
 			else{
 				renderShape(node->primitives[i]->type);
@@ -378,12 +297,9 @@ void drawSceneTree3(SceneNode *node, bool wire, Matrix& fromP) {
 
 		glPopMatrix();
 
-		//printf("%d\n", node->children.size());
 		for (int i = 0; i < node->children.size(); i++) {
-			//printf("B\n");
-			drawSceneTree3(node->children[i], wire, T);
+			drawSceneTree(node->children[i], wire, T);
 		}
-		////glPopMatrix();
 	}
 }
 
@@ -397,8 +313,6 @@ void myGlutDisplay(void)
 	if (parser == NULL) {
 		return;
 	}
-
-	//setupCamera(); //?? should it be here
 
 	camera->SetViewAngle(viewAngle);
 	glMatrixMode(GL_PROJECTION);
@@ -437,12 +351,7 @@ void myGlutDisplay(void)
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		Matrix P = Matrix();
-		drawSceneTree3(root, true, P);
-		//sphere->draw();
-		//glColor3f(0,1,0);
-		//cube->draw();
-		//TODO: draw wireframe of the scene...
-		// note that you don't need to applyMaterial, just draw the geometry
+		drawSceneTree(root, true, P);
 	}
 
     glDisable(GL_COLOR_MATERIAL);
@@ -457,12 +366,8 @@ void myGlutDisplay(void)
 	if (fillObj == 1) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//glutSolidCube(1.0);
 		Matrix P = Matrix();
-     	drawSceneTree3(root, false, P);
-		//renderShape(SHAPE_CUBE);
-		//TODO: render the scene...
-		// note that you should always applyMaterial first, then draw the geometry
+     	drawSceneTree(root, false, P);
 	}
 	glDisable(GL_LIGHTING);
 	
