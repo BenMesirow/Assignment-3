@@ -23,11 +23,35 @@ void Sphere::draw() {
             float lowerZU = ithSliceZComponent(upperR,i,m_segmentsX);
             float upperZU = ithSliceZComponent(upperR,i+1,m_segmentsX);
 
+            Vector norm1(lowerXL,lowerY,lowerZL);
+            norm1.normalize();
+            glNormal3f(norm1[0],norm1[1],norm1[2]);
             glVertex3f(lowerXL,lowerY,lowerZL);
+
+            Vector norm2(upperXL,lowerY,upperZL);
+            norm2.normalize();
+            glNormal3f(norm2[0],norm2[1],norm2[2]);
             glVertex3f(upperXL,lowerY,upperZL);
+
+            Vector norm3(lowerXU,upperY,lowerZU);
+            norm3.normalize();
+            glNormal3f(norm3[0],norm3[1],norm3[2]);
             glVertex3f(lowerXU,upperY,lowerZU);
+
+            Vector norm4(lowerXU,upperY,lowerZU);
+            norm4.normalize();
+            glNormal3f(norm4[0],norm4[1],norm4[2]);
             glVertex3f(lowerXU,upperY,lowerZU);
+
+
+            Vector norm5(upperXL,lowerY,upperZL);
+            norm5.normalize();
+            glNormal3f(norm5[0],norm5[1],norm5[2]);
             glVertex3f(upperXL,lowerY,upperZL);
+
+            Vector norm6(upperXU,upperY,upperZU);
+            norm6.normalize();
+            glNormal3f(norm6[0],norm6[1],norm6[2]);
             glVertex3f(upperXU,upperY,upperZU);
         }
     }   
