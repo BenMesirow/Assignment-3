@@ -19,12 +19,16 @@
 
             glNormal3f(0,0,1);
             glVertex3f(p1[0], p1[1], p1[2]);
+            glNormal3f(0,0,1);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0,0,1);
             glVertex3f(p3[0], p3[1], p3[2]);
 
             glNormal3f(0,0,1);
             glVertex3f(p3[0], p3[1], p3[2]);
+            glNormal3f(0,0,1);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0,0,1);
             glVertex3f(p4[0], p4[1], p4[2]);
 
                     /* right face */
@@ -35,12 +39,16 @@
 
             glNormal3f(1, 0, 0);
             glVertex3f(p1[0], p1[1], p1[2]);
+            glNormal3f(1, 0, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(1, 0, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
 
             glNormal3f(1, 0, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
+            glNormal3f(1, 0, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(1, 0, 0);
             glVertex3f(p4[0], p4[1], p4[2]);
 
                     /* back face */
@@ -51,12 +59,16 @@
 
             glNormal3f(0, 0, -1);
             glVertex3f(p1[0], p1[1], p1[2]);
+            glNormal3f(0, 0, -1);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0, 0, -1);
             glVertex3f(p3[0], p3[1], p3[2]);
 
             glNormal3f(0, 0, -1);
             glVertex3f(p3[0], p3[1], p3[2]);
+            glNormal3f(0, 0, -1);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0, 0, -1);
             glVertex3f(p4[0], p4[1], p4[2]);                
 
                     /* left face */
@@ -67,11 +79,16 @@
 
             glNormal3f(-1, 0, 0);
             glVertex3f(p1[0], p1[1], p1[2]);
+            glNormal3f(-1, 0, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
-            glVertex3f(p3[0], p3[1], p3[2]);
             glNormal3f(-1, 0, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
+
+            glNormal3f(-1, 0, 0);
+            glVertex3f(p3[0], p3[1], p3[2]);
+            glNormal3f(-1, 0, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(-1, 0, 0);
             glVertex3f(p4[0], p4[1], p4[2]);                
 
         }
@@ -85,12 +102,16 @@
 
             glNormal3f(0, 1, 0);
             glVertex3f(p1[0], p1[1], p1[2]);
+            glNormal3f(0, 1, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0, 1, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
 
             glNormal3f(0, 1, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
+            glNormal3f(0, 1, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0, 1, 0);
             glVertex3f(p4[0], p4[1], p4[2]);                
 
                     /* bottom face */
@@ -101,12 +122,16 @@
 
             glNormal3f(0, -1, 0);
             glVertex3f(p1[0], p1[1], p1[2]);
+            glNormal3f(0, -1, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0, -1, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
 
             glNormal3f(0, -1, 0);
             glVertex3f(p3[0], p3[1], p3[2]);
+            glNormal3f(0, -1, 0);
             glVertex3f(p2[0], p2[1], p2[2]);
+            glNormal3f(0, -1, 0);
             glVertex3f(p4[0], p4[1], p4[2]);                
 
         }

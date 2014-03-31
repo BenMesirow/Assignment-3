@@ -45,7 +45,9 @@ void Torus::draw() {
             norm.normalize();
             glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(p1[0],p1[1],p1[2]);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(p2[0],p2[1],p2[2]);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(p3[0],p3[1],p3[2]);
 
             n1 = p2 - p3;
@@ -56,7 +58,9 @@ void Torus::draw() {
 
             glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(p3[0],p3[1],p3[2]);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(p2[0],p2[1],p2[2]);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(p4[0],p4[1],p4[2]);
         }
     }

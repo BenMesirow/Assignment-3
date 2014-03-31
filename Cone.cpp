@@ -45,12 +45,16 @@ void Cone::draw() {
 
             glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(lowerXL,lowerY,lowerZL);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(upperXL,lowerY,upperZL);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(lowerXU,upperY,lowerZU);
 
             glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(lowerXU,upperY,lowerZU);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(upperXL,lowerY,upperZL);
+            glNormal3f(norm[0],norm[1],norm[2]);
             glVertex3f(upperXU,upperY,upperZU);
         }
     }
